@@ -9,7 +9,6 @@ import pandas as pd
 
 #Содание базы данных
 my_file = open("Orders.db", "w+")
-#conn = sqlite3.connect(r'C:\Users\Плотников\Desktop\Proekt_crm\Orders.db')
 conn = sqlite3.connect(r'./Orders.db')
 cur = conn.cursor()
 cur.execute("""CREATE TABLE IF NOT EXISTS Orders(
