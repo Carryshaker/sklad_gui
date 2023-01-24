@@ -4,50 +4,79 @@
 import sqlite3
 import datetime
 from tkinter import *
+from tkinter import messagebox
+from tkinter.ttk import Combobox
 import pandas as pd
 
 
 #Содание базы данных
-my_file = open("Orders.db", "w+")
 conn = sqlite3.connect(r'./Orders.db')
 cur = conn.cursor()
 cur.execute("""CREATE TABLE IF NOT EXISTS Orders(
 prdid INTEGER PRIMARY KEY autoincrement,
 name_prod TEXT,
 count INT,
-datetime TEXT);""")
+datetime DATETIME,
+type_prod TEXT);""")
 conn.commit()
 prod_name=[]
 
+
 class Sklad:
 
-    def note_bd(self, name, count):
+    def note_bd(self, name, count, type_prod):
         self.name=name
         self.count=count
+        self.type_prod=type_prod
+        prd_name_mass=[]
+        cur.execute("SELECT name_prod FROM Orders")
+        prd_name=cur.fetchall()
+        for i in prd_name:
+            prd_name_mass.append(i[0])
 
-        prod_name_slov={}
-
-        if name in prod_name:
-            cur.execute(f"UPDATE Orders SET count=count+'{count}' WHERE name_prod='{name}'")
-            conn.commit()
+        if name in prd_name_mass:
+            if int(count)>=0:
+                dtim = str(datetime.datetime.now())
+                dt_now=dtim[:19]
+                cur.execute(f"UPDATE Orders SET count=count+'{count}' WHERE name_prod='{name}'")
+                conn.commit()
+                cur.execute(f"UPDATE Orders SET datetime='{dt_now}' WHERE name_prod='{name}'")
+                conn.commit()
+            else:
+                messagebox.showerror("Ошибка!","количество должно быть больше нуля")
         else:
-            dtim = str(datetime.datetime.now())
-            dt_now=dtim[:19]
-            prod_name_slov[name]=int(count)
-            spis=(name, count, dt_now)
-            cur.execute("INSERT INTO Orders(name_prod, count, datetime) VALUES(?, ?, ?);", spis)
-            conn.commit()
-            prod_name.append(name)
+            if int(count)>0:
+                dtim = str(datetime.datetime.now())
+                dt_now=dtim[:19]
+                spis=(name, count, dt_now, type_prod)
+                cur.execute("INSERT INTO Orders(name_prod, count, datetime, type_prod) VALUES(?, ?, ?, ?);", spis)
+                conn.commit()
+                prod_name.append(name)
+            else:
+                messagebox.showerror("Ошибка!","количество должно быть больше нуля")
 
     def database_out(self, name, count):
         self.name=name
         self.count=count
-        cur.execute(f"UPDATE Orders SET count=count-'{count}' WHERE name_prod='{name}'")
-        conn.commit()
+        cur.execute(f"SELECT count FROM Orders WHERE name_prod='{name}'")
+        prd_count=cur.fetchone()
+        for i in prd_count:
+            prd_spis=[]
+            prd_spis.append(i)
+        int_prd_spis=prd_spis[0]
+        int_prd_spis=int(prd_spis[0])
+        ostatok_fakt=int_prd_spis-int(count)
+        if ostatok_fakt>=0:
+            cur.execute(f"UPDATE Orders SET count=count-'{count}' WHERE name_prod='{name}'")
+            conn.commit()
+        else:
+            messagebox.showerror("Ошибка!", "Столько нет в наличии")
+
+
     
     def clicked_btn_get(self):
         cur.execute("SELECT * FROM Orders;")
-        three_results = cur.fetchall()
+        three_results = cur.fetchone()
         name=[]
         count=[]
         date_time=[]
@@ -58,6 +87,17 @@ class Sklad:
 
         df=pd.DataFrame({'Name':name, 'Count':count, 'Date_time':date_time})
         df.to_excel('./Orders.xlsx')
+    
+    def clear_bd(self):
+        cur.execute("DROP TABLE Orders;")
+        conn.commit()
+        cur.execute("""CREATE TABLE IF NOT EXISTS Orders(
+        prdid INTEGER PRIMARY KEY autoincrement,
+        name_prod TEXT,
+        count INT,
+        datetime DATETIME,
+        type_prod TEXT);""")    
+        conn.commit()
 
         
 
@@ -75,7 +115,7 @@ class Sklad:
             count=txt2.get()
             txt2.delete(0, 'end')
             zxc=Sklad()
-            zxc.note_bd(name, count)
+            zxc.note_bd(name, count, type_prod)
         
         def xlsx():
             name=txt1.get()
@@ -84,6 +124,14 @@ class Sklad:
             txt2.delete(0, 'end')
             zxc=Sklad()
             zxc.clicked_btn_get()
+
+        def clear_bd():
+            name=txt1.get()
+            txt1.delete(0, 'end')
+            count=txt2.get()
+            txt2.delete(0, 'end')
+            zxc=Sklad()
+            zxc.clear_bd()
     
         lbl1=Label(window, text="Наименование", font=('Arial Bold', 10))
         lbl1.grid(column=0, row=4)
@@ -93,10 +141,21 @@ class Sklad:
         lbl2.grid(column=0, row=5)
         txt2 = Entry(window,width=15)  
         txt2.grid(column=1, row=5)
+        lbl3=Label(window, text="Тип товара", font=('Arial Bold', 10))
+        lbl3.grid(column=0, row=6)
+
+        type_prod_spis = ["Овощи", "Молочная продукция", "Мясо и рыба", "Алкоголь", "Прочее"]
+        combo = Combobox(window, width=10)  
+        combo['values'] = (type_prod_spis)    
+        combo.grid(column=1, row=6)
+        type_prod=combo.get()
+
         btn_ok = Button(window, text="Ok", command=info)
-        btn_ok.grid(column=3, row=6)
+        btn_ok.grid(column=3, row=7)
         btn_xlsx = Button(window, text="Выгрузить в Excel", command=xlsx)
-        btn_xlsx.grid(column=3, row=7)
+        btn_xlsx.grid(column=3, row=8)
+        btn_clear_bd = Button(window, text="Очистить базу данных", command=clear_bd)
+        btn_clear_bd.grid(column=3, row=9)
 
     def clicked_btn2(self):
         def clicked_2():
@@ -121,6 +180,14 @@ class Sklad:
             txt2.delete(0, 'end')
             zxc=Sklad()
             zxc.clicked_btn_get()
+
+        def clear_bd():
+            name=txt1.get()
+            txt1.delete(0, 'end')
+            count=txt2.get()
+            txt2.delete(0, 'end')
+            zxc=Sklad()
+            zxc.clear_bd()
     
         lbl1=Label(window, text="Наименование", font=('Arial Bold', 10))
         lbl1.grid(column=0, row=4)
@@ -130,10 +197,21 @@ class Sklad:
         lbl2.grid(column=0, row=5)
         txt2 = Entry(window,width=15)  
         txt2.grid(column=1, row=5)
+        lbl3=Label(window, text="Тип товара", font=('Arial Bold', 10))
+        lbl3.grid(column=0, row=6)
+        
+        type_prod_spis = ["Овощи", "Молочная продукция", "Мясо и рыба", "Алкоголь", "Прочее"]
+        combo = Combobox(window, width=10)  
+        combo['values'] = (type_prod_spis)    
+        combo.grid(column=1, row=6)
+        type_prod=combo.get()
+
         btn_ok = Button(window, text="Ok", command=info)
-        btn_ok.grid(column=3, row=6)
+        btn_ok.grid(column=3, row=7)
         btn_xlsx = Button(window, text="Выгрузить в Excel", command=xlsx)
-        btn_xlsx.grid(column=3, row=7)
+        btn_xlsx.grid(column=3, row=8)
+        btn_clear_bd = Button(window, text="Очистить базу данных", command=clear_bd)
+        btn_clear_bd.grid(column=3, row=9)
 
 xyz=Sklad()
 window=Tk()
