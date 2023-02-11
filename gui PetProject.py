@@ -5,6 +5,7 @@ import sqlite3
 import datetime
 from tkinter import *
 from tkinter import messagebox
+from tkinter import ttk
 from tkinter.ttk import Combobox
 import pandas as pd
 
@@ -28,6 +29,7 @@ class Sklad:
         self.name=name
         self.count=count
         self.type_prod=type_prod
+        print(type_prod)
         prd_name_mass=[]
         cur.execute("SELECT name_prod FROM Orders")
         prd_name=cur.fetchall()
@@ -80,12 +82,14 @@ class Sklad:
         name=[]
         count=[]
         date_time=[]
+        type_prod=[]
         for i in three_results:
             name.append(i[1])
             count.append(i[2])
             date_time.append(i[3])
+            type_prod.append(i[3])
 
-        df=pd.DataFrame({'Name':name, 'Count':count, 'Date_time':date_time})
+        df=pd.DataFrame({'Name':name, 'Count':count, 'Date_time':date_time, 'Type_prod':type_prod})
         df.to_excel('./Orders.xlsx')
     
     def clear_bd(self):
@@ -139,16 +143,17 @@ class Sklad:
         txt1.grid(column=1, row=4)
         lbl2=Label(window, text="Количество", font=('Arial Bold', 10))
         lbl2.grid(column=0, row=5)
-        txt2 = Entry(window,width=15)  
+        txt2 = Entry(window,width=15)
         txt2.grid(column=1, row=5)
         lbl3=Label(window, text="Тип товара", font=('Arial Bold', 10))
         lbl3.grid(column=0, row=6)
 
-        type_prod_spis = ["Овощи", "Молочная продукция", "Мясо и рыба", "Алкоголь", "Прочее"]
-        combo = Combobox(window, width=10)  
-        combo['values'] = (type_prod_spis)    
+        box_value=StringVar()
+        combo = ttk.Combobox(textvariable=box_value, state='readonly')
+        combo["values"] = ["Овощи", "Молочная продукция", "Мясо и рыба", "Алкоголь", "Прочее"]
         combo.grid(column=1, row=6)
         type_prod=combo.get()
+
 
         btn_ok = Button(window, text="Ok", command=info)
         btn_ok.grid(column=3, row=7)
