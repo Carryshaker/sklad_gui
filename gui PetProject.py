@@ -3,6 +3,7 @@
 
 import sqlite3
 import datetime
+import tkinter as tk
 from tkinter import *
 from tkinter import messagebox
 from tkinter import ttk
@@ -29,7 +30,6 @@ class Sklad:
         self.name=name
         self.count=count
         self.type_prod=type_prod
-        print(type_prod)
         prd_name_mass=[]
         cur.execute("SELECT name_prod FROM Orders")
         prd_name=cur.fetchall()
@@ -118,6 +118,7 @@ class Sklad:
             txt1.delete(0, 'end')
             count=txt2.get()
             txt2.delete(0, 'end')
+            type_prod=combo.get()
             zxc=Sklad()
             zxc.note_bd(name, count, type_prod)
         
@@ -148,11 +149,12 @@ class Sklad:
         lbl3=Label(window, text="Тип товара", font=('Arial Bold', 10))
         lbl3.grid(column=0, row=6)
 
-        box_value=StringVar()
-        combo = ttk.Combobox(textvariable=box_value, state='readonly')
+        box_value=tk.StringVar()
+        combo = ttk.Combobox(textvariable=box_value)
         combo["values"] = ["Овощи", "Молочная продукция", "Мясо и рыба", "Алкоголь", "Прочее"]
+        #combo.current(0)
         combo.grid(column=1, row=6)
-        type_prod=combo.get()
+        
 
 
         btn_ok = Button(window, text="Ok", command=info)
@@ -219,7 +221,7 @@ class Sklad:
         btn_clear_bd.grid(column=3, row=9)
 
 xyz=Sklad()
-window=Tk()
+window=tk.Tk()
 window.title("Склад")
 window.geometry('400x300')
 
