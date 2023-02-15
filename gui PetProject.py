@@ -103,16 +103,9 @@ class Sklad:
         type_prod TEXT);""")    
         conn.commit()
 
-        
+
 
     def clicked_btn1(self):
-        def clicked_1():
-            lbl1.grid_forget()
-            txt1.grid_forget()
-            lbl2.grid_forget()
-            txt2.grid_forget()
-            btn_ok.grid_forget()
-    
         def info():
             name=txt1.get()
             txt1.delete(0, 'end')
@@ -152,11 +145,8 @@ class Sklad:
         box_value=tk.StringVar()
         combo = ttk.Combobox(textvariable=box_value)
         combo["values"] = ["Овощи", "Молочная продукция", "Мясо и рыба", "Алкоголь", "Прочее"]
-        #combo.current(0)
         combo.grid(column=1, row=6)
         
-
-
         btn_ok = Button(window, text="Ok", command=info)
         btn_ok.grid(column=3, row=7)
         btn_xlsx = Button(window, text="Выгрузить в Excel", command=xlsx)
@@ -165,12 +155,6 @@ class Sklad:
         btn_clear_bd.grid(column=3, row=9)
 
     def clicked_btn2(self):
-        def clicked_2():
-            lbl1.grid_forget()
-            txt1.grid_forget()
-            lbl2.grid_forget()
-            txt2.grid_forget()
-            btn_ok.grid_forget()
     
         def info():
             name=txt1.get()
@@ -207,11 +191,10 @@ class Sklad:
         lbl3=Label(window, text="Тип товара", font=('Arial Bold', 10))
         lbl3.grid(column=0, row=6)
         
-        type_prod_spis = ["Овощи", "Молочная продукция", "Мясо и рыба", "Алкоголь", "Прочее"]
-        combo = Combobox(window, width=10)  
-        combo['values'] = (type_prod_spis)    
+        box_value=tk.StringVar()
+        combo = ttk.Combobox(textvariable=box_value)
+        combo["values"] = ["Фрукты, овощи", "Молочная продукция", "Мясо и рыба", "Алкоголь", "Прочее"]
         combo.grid(column=1, row=6)
-        type_prod=combo.get()
 
         btn_ok = Button(window, text="Ok", command=info)
         btn_ok.grid(column=3, row=7)
