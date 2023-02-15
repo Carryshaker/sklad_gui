@@ -122,14 +122,6 @@ class Sklad:
             txt2.delete(0, 'end')
             zxc=Sklad()
             zxc.clicked_btn_get()
-
-        def clear_bd():
-            name=txt1.get()
-            txt1.delete(0, 'end')
-            count=txt2.get()
-            txt2.delete(0, 'end')
-            zxc=Sklad()
-            zxc.clear_bd()
     
         lbl1=Label(window, text="Наименование", font=('Arial Bold', 10))
         lbl1.grid(column=0, row=4)
@@ -148,11 +140,9 @@ class Sklad:
         combo.grid(column=1, row=6)
         
         btn_ok = Button(window, text="Ok", command=info)
-        btn_ok.grid(column=3, row=7)
+        btn_ok.grid(column=3, row=8)
         btn_xlsx = Button(window, text="Выгрузить в Excel", command=xlsx)
-        btn_xlsx.grid(column=3, row=8)
-        btn_clear_bd = Button(window, text="Очистить базу данных", command=clear_bd)
-        btn_clear_bd.grid(column=3, row=9)
+        btn_xlsx.grid(column=3, row=9)
 
     def clicked_btn2(self):
     
@@ -171,14 +161,6 @@ class Sklad:
             txt2.delete(0, 'end')
             zxc=Sklad()
             zxc.clicked_btn_get()
-
-        def clear_bd():
-            name=txt1.get()
-            txt1.delete(0, 'end')
-            count=txt2.get()
-            txt2.delete(0, 'end')
-            zxc=Sklad()
-            zxc.clear_bd()
     
         lbl1=Label(window, text="Наименование", font=('Arial Bold', 10))
         lbl1.grid(column=0, row=4)
@@ -197,16 +179,14 @@ class Sklad:
         combo.grid(column=1, row=6)
 
         btn_ok = Button(window, text="Ok", command=info)
-        btn_ok.grid(column=3, row=7)
+        btn_ok.grid(column=3, row=8)
         btn_xlsx = Button(window, text="Выгрузить в Excel", command=xlsx)
-        btn_xlsx.grid(column=3, row=8)
-        btn_clear_bd = Button(window, text="Очистить базу данных", command=clear_bd)
-        btn_clear_bd.grid(column=3, row=9)
+        btn_xlsx.grid(column=3, row=9)
 
 xyz=Sklad()
 window=tk.Tk()
 window.title("Склад")
-window.geometry('400x300')
+window.geometry('600x400')
 
 lbl=Label(window, text="Выберите действие:", font=('Arial Bold', 10))
 lbl.grid(column=0, row=0)
@@ -216,5 +196,8 @@ btn1.grid(column=0, row=1)
 
 btn2 = Button(window, text="    Отправили товар    ", command=xyz.clicked_btn2)
 btn2.grid(column=1, row=1)
+
+btn3 = Button(window, text="    Очистить базу данных    ", command=xyz.clear_bd)
+btn3.grid(column=2, row=1)
 
 window.mainloop()
