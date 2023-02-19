@@ -103,9 +103,9 @@ class Sklad:
         type_prod TEXT);""")    
         conn.commit()
 
-
-
     def clicked_btn1(self):
+        mytext=btn1.cget('text')
+        print(mytext)
         def info():
             name=txt1.get()
             txt1.delete(0, 'end')
@@ -143,9 +143,11 @@ class Sklad:
         btn_ok.grid(column=3, row=8)
         btn_xlsx = Button(window, text="Выгрузить в Excel", command=xlsx)
         btn_xlsx.grid(column=3, row=9)
+        
 
     def clicked_btn2(self):
-    
+        mytext=btn2.cget('text')
+        print(mytext)
         def info():
             name=txt1.get()
             txt1.delete(0, 'end')
